@@ -28,9 +28,9 @@ jobs:
         run: |
           pnpm format:check
 
-      # - name: Lint 🧹
-      #   run: |
-      #     pnpm lint
+      - name: Lint 🧹
+        run: |
+          pnpm lint
 
       # - name: Test 🧪
       #   run: |
