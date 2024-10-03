@@ -32,6 +32,6 @@ jobs:
         run: |
           pnpm lint
 
-      # - name: Test 🧪
-      #   run: |
-      #     pnpm test
+      - name: Test 🧪
+        run: |
+          pnpm test
