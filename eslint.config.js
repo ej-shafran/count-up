@@ -3,6 +3,7 @@ import pluginJs from "@eslint/js";
 import tseslint from "typescript-eslint";
 import reactPlugin from "eslint-plugin-react";
 import reactRefresh from "eslint-plugin-react-refresh";
+import tailwind from "eslint-plugin-tailwindcss";
 
 export default tseslint.config(
   { files: ["**/*.{js,mjs,cjs,ts}"] },
@@ -26,4 +27,5 @@ export default tseslint.config(
     plugins: { "react-refresh": reactRefresh },
     rules: { "react-refresh/only-export-components": "error" },
   },
+  ...tailwind.configs["flat/recommended"],
 );
