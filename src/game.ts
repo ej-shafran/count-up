@@ -1,61 +1,29 @@
 import * as result from "./result";
+import type { NumberRange } from "./types/number-range";
+import { Tuple } from "./types/tuple";
 
 export const HAND_AMOUNT = 2;
 export const PLAYER_AMOUNT = 2;
 export const MAX_COUNT = 4;
 
-type SizedArray<TItem, TLength extends number> = readonly TItem[] & {
-  readonly length: TLength;
-};
-
-type RangeInclusiveImpl<
-  TMax extends number,
-  TAcc extends 1[] = [],
-> = TAcc["length"] extends TMax
-  ? TMax
-  : TAcc["length"] | RangeInclusiveImpl<TMax, [...TAcc, 1]>;
-
-type RangeExclusiveImpl<
-  TMax extends number,
-  TAcc extends 1[] = [],
-> = TAcc["length"] extends TMax
-  ? never
-  : TAcc["length"] | RangeExclusiveImpl<TMax, [...TAcc, 1]>;
-
-type RangeImpl<
-  TMax extends number,
-  TExclusive extends boolean | undefined,
-> = number extends TMax
-  ? number
-  : TExclusive extends true
-    ? RangeExclusiveImpl<TMax>
-    : RangeInclusiveImpl<TMax>;
-
-type Range<
-  TOptions extends {
-    max: number;
-    isExclusive?: boolean;
-  },
-> = RangeImpl<TOptions["max"], TOptions["isExclusive"]>;
-
-export type HandValue = Range<{
+export type HandValue = NumberRange<{
   max: typeof MAX_COUNT;
 }>;
-export type HandIndex = Range<{
+export type HandIndex = NumberRange<{
   max: typeof HAND_AMOUNT;
   isExclusive: true;
 }>;
-export type PlayerIndex = Range<{
+export type PlayerIndex = NumberRange<{
   max: typeof PLAYER_AMOUNT;
   isExclusive: true;
 }>;
 
 export interface Player {
-  readonly hands: SizedArray<HandValue, typeof HAND_AMOUNT>;
+  readonly hands: Tuple<HandValue, typeof HAND_AMOUNT>;
 }
 
 export interface Game {
-  readonly players: SizedArray<Player, typeof PLAYER_AMOUNT>;
+  readonly players: Tuple<Player, typeof PLAYER_AMOUNT>;
   readonly current: PlayerIndex;
 }
 
