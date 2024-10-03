@@ -1,6 +1,8 @@
 import globals from "globals";
 import pluginJs from "@eslint/js";
 import tseslint from "typescript-eslint";
+import reactPlugin from "eslint-plugin-react";
+import reactRefresh from "eslint-plugin-react-refresh";
 
 export default tseslint.config(
   { files: ["**/*.{js,mjs,cjs,ts}"] },
@@ -17,4 +19,11 @@ export default tseslint.config(
     },
   },
   { ignores: ["dist/", "*.config.js"] },
+  reactPlugin.configs.flat.recommended,
+  reactPlugin.configs.flat["jsx-runtime"],
+  { settings: { react: { version: "18" } } },
+  {
+    plugins: { "react-refresh": reactRefresh },
+    rules: { "react-refresh/only-export-components": "error" },
+  },
 );
