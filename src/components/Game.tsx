@@ -1,8 +1,8 @@
-import { useLosingPlayer } from "../game/store";
+import { useGameOverData } from "../game/store";
 import { Player } from "./Player";
 
 export function Game() {
-  const losingPlayer = useLosingPlayer();
+  const losingPlayer = useGameOverData();
 
   return (
     <div className="m-auto flex h-full w-1/2 flex-col py-3 text-center">

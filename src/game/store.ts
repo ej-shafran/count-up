@@ -1,53 +1,44 @@
 import * as game from ".";
 
 import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
 
 interface GameStore {
   game: game.Game;
   originHand: game.HandIndex | null;
 }
 
-interface GameStoreActions {
-  selectHand(this: void, hand: game.HandIndex): void;
-  deselectHand(this: void): void;
-  reviveHand(this: void): void;
+export function reviveHand() {
+  const store = useGameStore.getState();
+
+  useGameStore.setState({
+    game: game.split(store.game),
+    originHand: null,
+  });
 }
 
-export const useGameStore = create<GameStore & GameStoreActions>()(
-  immer((set, get) => ({
-    game: game.initial,
+export function deselectHand() {
+  useGameStore.setState({ originHand: null });
+}
+
+export function selectHand(hand: game.HandIndex) {
+  const store = useGameStore.getState();
+  if (store.originHand === null) {
+    useGameStore.setState({ originHand: hand });
+    return;
+  }
+
+  useGameStore.setState({
+    game: game.makeMove(store.game, store.originHand, hand),
     originHand: null,
+  });
+}
 
-    deselectHand() {
-      set({ originHand: null });
-    },
+export const useGameStore = create<GameStore>()(() => ({
+  game: game.initial,
+  originHand: null,
+}));
 
-    selectHand(hand) {
-      const store = get();
-      if (store.originHand === null) {
-        set({ originHand: hand });
-        return;
-      }
-
-      set({
-        game: game.makeMove(store.game, store.originHand, hand),
-        originHand: null,
-      });
-    },
-
-    reviveHand() {
-      const store = get();
-
-      set({
-        game: game.split(store.game),
-        originHand: null,
-      });
-    },
-  })),
-);
-
-export const useLosingPlayer = () =>
+export const useLoser = () =>
   useGameStore((store) => {
     const losingPlayerIndex = store.game.players.findIndex((player) =>
       player.hands.every((fingers) => fingers === 0),

@@ -1,4 +1,10 @@
-import { useGameStore, useLosingPlayer } from "../game/store";
+import {
+  deselectHand,
+  reviveHand,
+  selectHand,
+  useGameStore,
+  useLoser,
+} from "../game/store";
 import * as game from "../game";
 import { Finger } from "./Finger";
 import clsx from "clsx";
@@ -13,10 +19,6 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
     (store) => store.game.players[playerIndex].hands[handIndex],
   );
   const currentPlayer = useGameStore((store) => store.game.current);
-
-  const selectHand = useGameStore((store) => store.selectHand);
-  const deselectHand = useGameStore((store) => store.deselectHand);
-  const reviveHand = useGameStore((store) => store.reviveHand);
 
   const isRevivable = useGameStore((store) => {
     if (store.game.current !== playerIndex) return false;
@@ -34,17 +36,17 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
       store.game.current === playerIndex && store.originHand === handIndex,
   );
 
-  const losingPlayer = useLosingPlayer();
+  const loser = useLoser();
 
   const border =
-    losingPlayer !== 1 && (currentPlayer === 1 || losingPlayer === 0)
+    loser !== 1 && (currentPlayer === 1 || loser === 0)
       ? "border-playerTwo-300"
       : "border-playerOne-300";
 
   if (fingers === 0) {
     return (
       <button
-        disabled={losingPlayer !== null || !isRevivable}
+        disabled={loser !== null || !isRevivable}
         className={clsx(
           "w-1/2 grow",
           isRevivable && ["rounded border-2 border-dashed bg-gray-100", border],
@@ -60,7 +62,7 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
 
   return (
     <button
-      disabled={losingPlayer !== null || (!isActive && !isSelected)}
+      disabled={loser !== null || (!isActive && !isSelected)}
       className={clsx(
         "grid w-1/2 grow grid-cols-2 grid-rows-2 rounded border-2 p-8 transition-colors",
         playerIndex === 1
