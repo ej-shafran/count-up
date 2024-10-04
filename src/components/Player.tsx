@@ -14,7 +14,9 @@ export function Player({ playerIndex }: PlayerProps) {
         playerIndex === 0 ? "flex-col-reverse" : "flex-col",
       )}
     >
-      <h2>Player {playerIndex + 1}</h2>
+      <h2 className="arvo-regular text-xl">
+        Player {playerIndex === 1 ? "Two" : "One"}
+      </h2>
 
       <div className="flex grow gap-3">
         <Hand playerIndex={playerIndex} handIndex={0} />
