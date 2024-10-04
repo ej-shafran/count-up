@@ -14,27 +14,26 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 export interface HandProps {
-  playerIndex: game.PlayerIndex;
-  handIndex: game.HandIndex;
+  player: game.Player;
+  hand: game.Hand;
 }
 
 const ANIMATION_TIMEOUT = 500;
 
-export function Hand({ handIndex, playerIndex }: HandProps) {
+export function Hand({ hand, player }: HandProps) {
   const fingers = useGameStore(
-    (store) => store.game.players[playerIndex].hands[handIndex],
+    (store) => store.game.players[player].hands[hand],
   );
   const isSelected = useGameStore(
-    (store) =>
-      store.game.current === playerIndex && store.originHand === handIndex,
+    (store) => store.game.currentPlayer === player && store.originHand === hand,
   );
 
   const [isAnimating, setIsAnimating] = useState(false);
   const currentPlayer = useCurrentPlayer();
   const loser = useLoser();
 
-  const canSplit = useCanSplit(playerIndex);
-  const isClickable = useIsClickable(playerIndex);
+  const canSplit = useCanSplit(player);
+  const isClickable = useIsClickable(player);
 
   const border =
     loser !== 1 && (currentPlayer === 1 || loser === 0)
@@ -42,7 +41,7 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
       : "border-playerOne-300";
 
   const background =
-    playerIndex === 1
+    player === 1
       ? isSelected
         ? "bg-playerTwo-200"
         : "bg-playerTwo-100"
@@ -103,14 +102,14 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
         if (!isClickable) return;
 
         setIsAnimating(true);
-        selectHand(handIndex);
+        selectHand(hand);
         setTimeout(() => {
           setIsAnimating(false);
         }, ANIMATION_TIMEOUT);
       }}
     >
       {Array.from({ length: game.MAX_COUNT }, (_, i) => (
-        <Finger key={i} playerIndex={playerIndex} isFilled={fingers > i} />
+        <Finger key={i} player={player} isFilled={fingers > i} />
       ))}
     </button>
   );

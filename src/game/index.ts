@@ -6,59 +6,56 @@ export const HAND_AMOUNT = 2;
 export const PLAYER_AMOUNT = 2;
 export const MAX_COUNT = 4;
 
-export type HandValue = NumberRange<{
+export type Fingers = NumberRange<{
   max: typeof MAX_COUNT;
 }>;
-export type HandIndex = NumberRange<{
+export type Hand = NumberRange<{
   max: typeof HAND_AMOUNT;
   isExclusive: true;
 }>;
-export type PlayerIndex = NumberRange<{
+export type Player = NumberRange<{
   max: typeof PLAYER_AMOUNT;
   isExclusive: true;
 }>;
 
-export interface Player {
-  readonly hands: Tuple<HandValue, typeof HAND_AMOUNT>;
+export interface PlayerData {
+  readonly hands: Tuple<Fingers, typeof HAND_AMOUNT>;
 }
 
 export interface Game {
-  readonly players: Tuple<Player, typeof PLAYER_AMOUNT>;
-  readonly current: PlayerIndex;
+  readonly players: Tuple<PlayerData, typeof PLAYER_AMOUNT>;
+  readonly currentPlayer: Player;
 }
 
 export const initial: Game = {
   players: [{ hands: [1, 1] }, { hands: [1, 1] }],
-  current: 0,
+  currentPlayer: 0,
 };
 
 export function split(game: Game) {
-  const emptyHand = game.players[game.current].hands.indexOf(0);
-  const originValue = game.players[game.current].hands[emptyHand === 0 ? 1 : 0];
+  const emptyHand = game.players[game.currentPlayer].hands.indexOf(0);
+  const originValue =
+    game.players[game.currentPlayer].hands[emptyHand === 0 ? 1 : 0];
 
   if (emptyHand === -1 || originValue === 0)
     throw new Error("TODO: handle invalid inputs");
 
   return produce(game, (draft) => {
-    draft.players[draft.current].hands = [originValue / 2, originValue / 2] as [
-      HandValue,
-      HandValue,
-    ];
-    draft.current = draft.current === 0 ? 1 : 0;
+    draft.players[draft.currentPlayer].hands = [
+      originValue / 2,
+      originValue / 2,
+    ] as [Fingers, Fingers];
+    draft.currentPlayer = draft.currentPlayer === 0 ? 1 : 0;
   });
 }
 
-export function makeMove(
-  game: Game,
-  originHand: HandIndex,
-  targetHand: HandIndex,
-): Game {
-  const originValue = game.players[game.current].hands[originHand];
-  const otherPlayerIndex: PlayerIndex = game.current === 0 ? 1 : 0;
-  const targetValue = game.players[otherPlayerIndex].hands[targetHand];
-  const newValue = ((targetValue + originValue) % 5) as HandValue;
+export function makeMove(game: Game, originHand: Hand, targetHand: Hand): Game {
+  const originValue = game.players[game.currentPlayer].hands[originHand];
+  const otherPlayer: Player = game.currentPlayer === 0 ? 1 : 0;
+  const targetValue = game.players[otherPlayer].hands[targetHand];
+  const newValue = ((targetValue + originValue) % 5) as Fingers;
   return produce(game, (draft) => {
-    draft.players[otherPlayerIndex].hands[targetHand] = newValue;
-    draft.current = otherPlayerIndex;
+    draft.players[otherPlayer].hands[targetHand] = newValue;
+    draft.currentPlayer = otherPlayer;
   });
 }

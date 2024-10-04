@@ -9,29 +9,29 @@ import {
 } from "@/game/store";
 
 export interface PlayerProps {
-  playerIndex: game.PlayerIndex;
+  player: game.Player;
 }
 
-export function Player({ playerIndex }: PlayerProps) {
+export function Player({ player }: PlayerProps) {
   const currentPlayer = useCurrentPlayer();
-  const canSplit = useCanSplit(playerIndex);
-  const isClickable = useIsClickable(playerIndex);
-  const otherIsClickable = useIsClickable(playerIndex === 0 ? 1 : 0);
+  const canSplit = useCanSplit(player);
+  const isClickable = useIsClickable(player);
+  const otherIsClickable = useIsClickable(player === 0 ? 1 : 0);
   const loser = useLoser();
 
   return (
     <div
       className={cn(
         "flex h-1/2 grow gap-3",
-        playerIndex === 0 ? "flex-col-reverse" : "flex-col",
+        player === 0 ? "flex-col-reverse" : "flex-col",
       )}
     >
       <h2 className="arvo-regular text-xl">
-        {(loser !== null || currentPlayer !== playerIndex) && (
-          <>Player {playerIndex === 1 ? "Two" : "One"}</>
+        {(loser !== null || currentPlayer !== player) && (
+          <>Player {player === 1 ? "Two" : "One"}</>
         )}
 
-        {loser === null && currentPlayer === playerIndex && (
+        {loser === null && currentPlayer === player && (
           <>
             {isClickable && (
               <>Select a hand to use{canSplit && " (or SPLIT)"}</>
@@ -45,8 +45,8 @@ export function Player({ playerIndex }: PlayerProps) {
       </h2>
 
       <div className="flex grow gap-3">
-        <Hand playerIndex={playerIndex} handIndex={0} />
-        <Hand playerIndex={playerIndex} handIndex={1} />
+        <Hand player={player} hand={0} />
+        <Hand player={player} hand={1} />
       </div>
     </div>
   );

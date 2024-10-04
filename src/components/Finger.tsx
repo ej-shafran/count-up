@@ -7,10 +7,10 @@ const ANIMATION_TIMEOUT = 500;
 
 export interface FingerProps {
   isFilled: boolean;
-  playerIndex: game.PlayerIndex;
+  player: game.Player;
 }
 
-export function Finger({ playerIndex, isFilled: isFilledBase }: FingerProps) {
+export function Finger({ player, isFilled: isFilledBase }: FingerProps) {
   const [offset] = useState(() => [Math.random(), Math.random()]);
 
   const [isFilled, setIsFilled] = useState(isFilledBase);
@@ -46,7 +46,7 @@ export function Finger({ playerIndex, isFilled: isFilledBase }: FingerProps) {
       className={cn(
         "relative aspect-square rounded-[50%]",
         isFilledBase ? "animate-jump" : "animate-jump-out",
-        playerIndex === 1 ? "bg-playerTwo-400" : "bg-playerOne-400",
+        player === 1 ? "bg-playerTwo-400" : "bg-playerOne-400",
       )}
     />
   );

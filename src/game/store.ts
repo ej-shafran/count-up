@@ -4,7 +4,7 @@ import { create } from "zustand";
 
 interface GameStore {
   game: game.Game;
-  originHand: game.HandIndex | null;
+  originHand: game.Hand | null;
 }
 
 export function splitHand() {
@@ -20,7 +20,7 @@ export function deselectHand() {
   useGameStore.setState({ originHand: null });
 }
 
-export function selectHand(hand: game.HandIndex) {
+export function selectHand(hand: game.Hand) {
   const store = useGameStore.getState();
   if (store.originHand === null) {
     useGameStore.setState({ originHand: hand });
@@ -43,24 +43,24 @@ export const useGameStore = create<GameStore>()(() => ({
 }));
 
 export const useCurrentPlayer = () =>
-  useGameStore((store) => store.game.current);
+  useGameStore((store) => store.game.currentPlayer);
 
-export const useCanSplit = (playerIndex: game.PlayerIndex) =>
+export const useCanSplit = (player: game.Player) =>
   useGameStore((store) => {
-    if (store.game.current !== playerIndex) return false;
+    if (store.game.currentPlayer !== player) return false;
 
-    const emptyHand = store.game.players[playerIndex].hands.indexOf(0);
+    const emptyHand = store.game.players[player].hands.indexOf(0);
     if (emptyHand === -1) return false;
 
     const otherHandFingers =
-      store.game.players[playerIndex].hands[emptyHand === 0 ? 1 : 0];
+      store.game.players[player].hands[emptyHand === 0 ? 1 : 0];
     return otherHandFingers !== 0 && otherHandFingers % 2 === 0;
   });
 
-export const useIsClickable = (playerIndex: game.PlayerIndex) =>
+export const useIsClickable = (player: game.Player) =>
   useGameStore(
     (store) =>
-      (store.game.current === playerIndex) === (store.originHand === null),
+      (store.game.currentPlayer === player) === (store.originHand === null),
   );
 
 export const useLoser = () =>
@@ -70,5 +70,5 @@ export const useLoser = () =>
     );
 
     if (losingPlayerIndex === -1) return null;
-    return losingPlayerIndex as game.PlayerIndex;
+    return losingPlayerIndex as game.Player;
   });
