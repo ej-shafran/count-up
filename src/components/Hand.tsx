@@ -7,8 +7,8 @@ import {
   useCurrentPlayer,
   useCanSplit,
   useIsClickable,
-} from "../game/store";
-import * as game from "../game";
+} from "@/game/store";
+import * as game from "@/game";
 import { Finger } from "./Finger";
 import clsx from "clsx";
 import { useState } from "react";

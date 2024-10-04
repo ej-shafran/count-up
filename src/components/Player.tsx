@@ -1,12 +1,12 @@
 import clsx from "clsx";
-import * as game from "../game";
+import * as game from "@/game";
 import { Hand } from "./Hand";
 import {
   useCanSplit,
   useCurrentPlayer,
   useIsClickable,
   useLoser,
-} from "../game/store";
+} from "@/game/store";
 
 export interface PlayerProps {
   playerIndex: game.PlayerIndex;

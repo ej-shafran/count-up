@@ -1,4 +1,4 @@
-import { useLoser } from "../game/store";
+import { useLoser } from "@/game/store";
 import { Player } from "./Player";
 
 export function Game() {

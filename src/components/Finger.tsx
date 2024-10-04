@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import * as game from "../game";
+import * as game from "@/game";
 import { useEffect, useState } from "react";
 
 const FINGER_SIZE = 50;

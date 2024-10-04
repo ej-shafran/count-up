@@ -1,6 +1,6 @@
 import { produce } from "immer";
-import type { NumberRange } from "../types/number-range";
-import { Tuple } from "../types/tuple";
+import type { NumberRange } from "@/types/number-range";
+import { Tuple } from "@/types/tuple";
 
 export const HAND_AMOUNT = 2;
 export const PLAYER_AMOUNT = 2;
