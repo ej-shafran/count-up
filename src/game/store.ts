@@ -38,6 +38,27 @@ export const useGameStore = create<GameStore>()(() => ({
   originHand: null,
 }));
 
+export const useCurrentPlayer = () =>
+  useGameStore((store) => store.game.current);
+
+export const useCanSplit = (playerIndex: game.PlayerIndex) =>
+  useGameStore((store) => {
+    if (store.game.current !== playerIndex) return false;
+
+    const emptyHand = store.game.players[playerIndex].hands.indexOf(0);
+    if (emptyHand === -1) return false;
+
+    const otherHandFingers =
+      store.game.players[playerIndex].hands[emptyHand === 0 ? 1 : 0];
+    return otherHandFingers !== 0 && otherHandFingers % 2 === 0;
+  });
+
+export const useIsClickable = (playerIndex: game.PlayerIndex) =>
+  useGameStore(
+    (store) =>
+      (store.game.current === playerIndex) === (store.originHand === null),
+  );
+
 export const useLoser = () =>
   useGameStore((store) => {
     const losingPlayerIndex = store.game.players.findIndex((player) =>

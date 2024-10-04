@@ -4,6 +4,9 @@ import {
   selectHand,
   useGameStore,
   useLoser,
+  useCurrentPlayer,
+  useCanSplit,
+  useIsClickable,
 } from "../game/store";
 import * as game from "../game";
 import { Finger } from "./Finger";
@@ -18,25 +21,16 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
   const fingers = useGameStore(
     (store) => store.game.players[playerIndex].hands[handIndex],
   );
-  const currentPlayer = useGameStore((store) => store.game.current);
-
-  const canSplit = useGameStore((store) => {
-    if (store.game.current !== playerIndex) return false;
-
-    const otherHandFingers =
-      store.game.players[playerIndex].hands[handIndex === 0 ? 1 : 0];
-    return otherHandFingers !== 0 && otherHandFingers % 2 === 0;
-  });
-  const isActive = useGameStore(
-    (store) =>
-      (store.game.current === playerIndex) === (store.originHand === null),
-  );
   const isSelected = useGameStore(
     (store) =>
       store.game.current === playerIndex && store.originHand === handIndex,
   );
 
+  const currentPlayer = useCurrentPlayer();
   const loser = useLoser();
+
+  const canSplit = useCanSplit(playerIndex);
+  const isClickable = useIsClickable(playerIndex);
 
   const border =
     loser !== 1 && (currentPlayer === 1 || loser === 0)
@@ -56,13 +50,13 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
 
           splitHand();
         }}
-      ></button>
+      />
     );
   }
 
   return (
     <button
-      disabled={loser !== null || (!isActive && !isSelected)}
+      disabled={loser !== null || (!isClickable && !isSelected)}
       className={clsx(
         "grid w-1/2 grow grid-cols-2 grid-rows-2 rounded border-2 p-8 transition-colors",
         playerIndex === 1
@@ -73,7 +67,7 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
             ? "bg-playerOne-200"
             : "bg-playerOne-100",
         border,
-        isActive && "border-dashed",
+        isClickable && "border-dashed",
       )}
       onClick={() => {
         if (isSelected) {
@@ -81,7 +75,7 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
           return;
         }
 
-        if (!isActive) return;
+        if (!isClickable) return;
 
         selectHand(handIndex);
       }}
