@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 
 describe("game.makeMove", () => {
   it("should make a move", () => {
-    expect(game.makeMove(game.initial, 0, 0)).toBe({
+    expect(game.makeMove(game.initial, 0, 0)).toEqual({
       players: [{ hands: [1, 1] }, { hands: [2, 1] }],
       current: 1,
     });
