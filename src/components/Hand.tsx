@@ -11,11 +11,14 @@ import {
 import * as game from "../game";
 import { Finger } from "./Finger";
 import clsx from "clsx";
+import { useState } from "react";
 
 export interface HandProps {
   playerIndex: game.PlayerIndex;
   handIndex: game.HandIndex;
 }
+
+const ANIMATION_TIMEOUT = 500;
 
 export function Hand({ handIndex, playerIndex }: HandProps) {
   const fingers = useGameStore(
@@ -26,6 +29,7 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
       store.game.current === playerIndex && store.originHand === handIndex,
   );
 
+  const [isAnimating, setIsAnimating] = useState(false);
   const currentPlayer = useCurrentPlayer();
   const loser = useLoser();
 
@@ -37,12 +41,38 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
       ? "border-playerTwo-300"
       : "border-playerOne-300";
 
+  const background =
+    playerIndex === 1
+      ? isSelected
+        ? "bg-playerTwo-200"
+        : "bg-playerTwo-100"
+      : isSelected
+        ? "bg-playerOne-200"
+        : "bg-playerOne-100";
+
+  const baseClassName = "grid w-1/2 grow grid-cols-2 grid-rows-2 rounded p-8";
+
   if (fingers === 0) {
+    if (isAnimating) {
+      return (
+        <button
+          disabled
+          className={clsx(
+            "animate-jump-out border-2 transition-colors animate-ease-in",
+            baseClassName,
+            background,
+            border,
+            isClickable && "border-dashed",
+          )}
+        />
+      );
+    }
+
     return (
       <button
         disabled={loser !== null || !canSplit}
         className={clsx(
-          "w-1/2 grow",
+          baseClassName,
           canSplit && ["rounded border-2 border-dashed bg-gray-100", border],
         )}
         onClick={() => {
@@ -58,14 +88,9 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
     <button
       disabled={loser !== null || (!isClickable && !isSelected)}
       className={clsx(
-        "grid w-1/2 grow grid-cols-2 grid-rows-2 rounded border-2 p-8 transition-colors",
-        playerIndex === 1
-          ? isSelected
-            ? "bg-playerTwo-200"
-            : "bg-playerTwo-100"
-          : isSelected
-            ? "bg-playerOne-200"
-            : "bg-playerOne-100",
+        baseClassName,
+        "border-2 transition-colors",
+        background,
         border,
         isClickable && "border-dashed",
       )}
@@ -77,11 +102,15 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
 
         if (!isClickable) return;
 
+        setIsAnimating(true);
         selectHand(handIndex);
+        setTimeout(() => {
+          setIsAnimating(false);
+        }, ANIMATION_TIMEOUT);
       }}
     >
-      {Array.from({ length: fingers }, (_, i) => (
-        <Finger key={i} playerIndex={playerIndex} />
+      {Array.from({ length: game.MAX_COUNT }, (_, i) => (
+        <Finger key={i} playerIndex={playerIndex} isFilled={fingers > i} />
       ))}
     </button>
   );
