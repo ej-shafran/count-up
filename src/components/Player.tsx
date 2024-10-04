@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import cn from "clsx";
 import * as game from "@/game";
 import { Hand } from "./Hand";
 import {
@@ -21,7 +21,7 @@ export function Player({ playerIndex }: PlayerProps) {
 
   return (
     <div
-      className={clsx(
+      className={cn(
         "flex h-1/2 grow gap-3",
         playerIndex === 0 ? "flex-col-reverse" : "flex-col",
       )}

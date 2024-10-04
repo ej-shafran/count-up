@@ -10,7 +10,7 @@ import {
 } from "@/game/store";
 import * as game from "@/game";
 import { Finger } from "./Finger";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 export interface HandProps {
@@ -57,7 +57,7 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
       return (
         <button
           disabled
-          className={clsx(
+          className={cn(
             "animate-jump-out border-2 transition-colors animate-ease-in",
             baseClassName,
             background,
@@ -71,7 +71,7 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
     return (
       <button
         disabled={loser !== null || !canSplit}
-        className={clsx(
+        className={cn(
           baseClassName,
           canSplit && ["rounded border-2 border-dashed bg-gray-100", border],
         )}
@@ -87,7 +87,7 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
   return (
     <button
       disabled={loser !== null || (!isClickable && !isSelected)}
-      className={clsx(
+      className={cn(
         baseClassName,
         "border-2 transition-colors",
         background,

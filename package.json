@@ -42,10 +42,14 @@
   "packageManager": "pnpm@9.10.0+sha512.73a29afa36a0d092ece5271de5177ecbf8318d454ecd701343131b8ebc0c1a91c487da46ab77c8e596d6acf1461e3594ced4becedf8921b074fbd8653ed7051c",
   "license": "MIT",
   "dependencies": {
+    "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "immer": "^10.1.1",
+    "lucide-react": "^0.447.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "tailwind-merge": "^2.5.3",
+    "tailwindcss-animate": "^1.0.7",
     "zustand": "5.0.0-rc.2"
   }
 }

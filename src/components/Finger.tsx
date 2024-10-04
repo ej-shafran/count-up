@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import * as game from "@/game";
 import { useEffect, useState } from "react";
 
@@ -43,7 +43,7 @@ export function Finger({ playerIndex, isFilled: isFilledBase }: FingerProps) {
           .map((n) => `${(n * (100 - FINGER_SIZE)).toFixed(0)}%`)
           .join(" "),
       }}
-      className={clsx(
+      className={cn(
         "relative aspect-square rounded-[50%]",
         isFilledBase ? "animate-jump" : "animate-jump-out",
         playerIndex === 1 ? "bg-playerTwo-400" : "bg-playerOne-400",
