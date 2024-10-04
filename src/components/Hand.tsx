@@ -1,6 +1,6 @@
 import {
   deselectHand,
-  reviveHand,
+  splitHand,
   selectHand,
   useGameStore,
   useLoser,
@@ -20,7 +20,7 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
   );
   const currentPlayer = useGameStore((store) => store.game.current);
 
-  const isRevivable = useGameStore((store) => {
+  const canSplit = useGameStore((store) => {
     if (store.game.current !== playerIndex) return false;
 
     const otherHandFingers =
@@ -46,15 +46,15 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
   if (fingers === 0) {
     return (
       <button
-        disabled={loser !== null || !isRevivable}
+        disabled={loser !== null || !canSplit}
         className={clsx(
           "w-1/2 grow",
-          isRevivable && ["rounded border-2 border-dashed bg-gray-100", border],
+          canSplit && ["rounded border-2 border-dashed bg-gray-100", border],
         )}
         onClick={() => {
-          if (!isRevivable) return;
+          if (!canSplit) return;
 
-          reviveHand();
+          splitHand();
         }}
       ></button>
     );

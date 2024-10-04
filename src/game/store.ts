@@ -7,7 +7,7 @@ interface GameStore {
   originHand: game.HandIndex | null;
 }
 
-export function reviveHand() {
+export function splitHand() {
   const store = useGameStore.getState();
 
   useGameStore.setState({
