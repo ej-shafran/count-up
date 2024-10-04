@@ -12,6 +12,16 @@ export default tseslint.config(
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
   {
+    rules: {
+      "@typescript-eslint/no-invalid-void-type": [
+        "error",
+        {
+          allowAsThisParameter: true,
+        },
+      ],
+    },
+  },
+  {
     languageOptions: {
       parserOptions: {
         projectService: true,
