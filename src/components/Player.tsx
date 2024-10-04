@@ -16,14 +16,14 @@ export function Player({ player }: PlayerProps) {
   const currentPlayer = useCurrentPlayer();
   const canSplit = useCanSplit(player);
   const isClickable = useIsClickable(player);
-  const otherIsClickable = useIsClickable(player === 0 ? 1 : 0);
+  const otherIsClickable = useIsClickable(game.getOtherPlayer(player));
   const loser = useLoser();
 
   return (
     <div
       className={cn(
         "flex h-1/2 grow gap-3",
-        player === 0 ? "flex-col-reverse" : "flex-col",
+        player === 1 ? "flex-col" : "flex-col-reverse",
       )}
     >
       <h2 className="arvo-regular text-xl">

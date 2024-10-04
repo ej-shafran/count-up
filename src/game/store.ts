@@ -10,8 +10,11 @@ interface GameStore {
 export function splitHand() {
   const store = useGameStore.getState();
 
+  const newGame = game.split(store.game);
+  if (!newGame) return;
+
   useGameStore.setState({
-    game: game.split(store.game),
+    game: newGame,
     originHand: null,
   });
 }
@@ -27,8 +30,11 @@ export function selectHand(hand: game.Hand) {
     return;
   }
 
+  const newGame = game.makeMove(store.game, store.originHand, hand);
+  if (!newGame) return;
+
   useGameStore.setState({
-    game: game.makeMove(store.game, store.originHand, hand),
+    game: newGame,
     originHand: null,
   });
 }
@@ -49,11 +55,11 @@ export const useCanSplit = (player: game.Player) =>
   useGameStore((store) => {
     if (store.game.currentPlayer !== player) return false;
 
-    const emptyHand = store.game.players[player].hands.indexOf(0);
+    const emptyHand = game.getHandByFingers(store.game, player, 0);
     if (emptyHand === -1) return false;
 
     const otherHandFingers =
-      store.game.players[player].hands[emptyHand === 0 ? 1 : 0];
+      store.game.players[player].hands[game.getOtherHand(emptyHand)];
     return otherHandFingers !== 0 && otherHandFingers % 2 === 0;
   });
 

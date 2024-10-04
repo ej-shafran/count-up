@@ -36,7 +36,7 @@ export function Hand({ hand, player }: HandProps) {
   const isClickable = useIsClickable(player);
 
   const border =
-    loser !== 1 && (currentPlayer === 1 || loser === 0)
+    loser !== 1 && (currentPlayer === 1 || loser !== null)
       ? "border-playerTwo-300"
       : "border-playerOne-300";
 
