@@ -1,15 +1,39 @@
 import clsx from "clsx";
 import * as game from "../game";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const FINGER_SIZE = 50;
+const ANIMATION_TIMEOUT = 500;
 
 export interface FingerProps {
+  isFilled: boolean;
   playerIndex: game.PlayerIndex;
 }
 
-export function Finger({ playerIndex }: FingerProps) {
+export function Finger({ playerIndex, isFilled: isFilledBase }: FingerProps) {
   const [offset] = useState(() => [Math.random(), Math.random()]);
+
+  const [isFilled, setIsFilled] = useState(isFilledBase);
+
+  useEffect(() => {
+    // If the finger got filled up,
+    // we want to show it with no delay
+    if (isFilledBase) {
+      setIsFilled(true);
+      return;
+    }
+
+    // If it got removed, we want to show a jump-out animation
+    const timer = setTimeout(() => {
+      setIsFilled(isFilledBase);
+    }, ANIMATION_TIMEOUT);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [isFilledBase]);
+
+  if (!isFilled) return null;
 
   return (
     <div
@@ -20,9 +44,10 @@ export function Finger({ playerIndex }: FingerProps) {
           .join(" "),
       }}
       className={clsx(
-        "relative aspect-square animate-jump rounded-[50%]",
+        "relative aspect-square rounded-[50%]",
+        isFilledBase ? "animate-jump" : "animate-jump-out",
         playerIndex === 1 ? "bg-playerTwo-400" : "bg-playerOne-400",
       )}
-    ></div>
+    />
   );
 }
