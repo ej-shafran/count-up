@@ -33,6 +33,10 @@ export function selectHand(hand: game.HandIndex) {
   });
 }
 
+export function restartGame() {
+  useGameStore.setState({ game: game.initial, originHand: null });
+}
+
 export const useGameStore = create<GameStore>()(() => ({
   game: game.initial,
   originHand: null,

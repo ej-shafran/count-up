@@ -32,6 +32,7 @@ export default tseslint.config(
   { ignores: ["dist/", "*.config.js"] },
   reactPlugin.configs.flat.recommended,
   reactPlugin.configs.flat["jsx-runtime"],
+  { rules: { "react/prop-types": "off" } },
   { settings: { react: { version: "18" } } },
   {
     plugins: { "react-refresh": reactRefresh },
