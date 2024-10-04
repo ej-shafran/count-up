@@ -62,7 +62,7 @@ export function Hand({ handIndex, playerIndex }: HandProps) {
     <button
       disabled={losingPlayer !== null || (!isActive && !isSelected)}
       className={clsx(
-        "grid aspect-square w-1/2 grow grid-cols-2 grid-rows-2 rounded border-2 p-8 transition-colors",
+        "grid w-1/2 grow grid-cols-2 grid-rows-2 rounded border-2 p-8 transition-colors",
         playerIndex === 1
           ? isSelected
             ? "bg-playerTwo-200"

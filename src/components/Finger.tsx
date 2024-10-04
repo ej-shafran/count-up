@@ -2,7 +2,7 @@ import clsx from "clsx";
 import * as game from "../game";
 import { useState } from "react";
 
-const FINGER_SIZE = 75;
+const FINGER_SIZE = 50;
 
 export interface FingerProps {
   playerIndex: game.PlayerIndex;
