@@ -11,3 +11,10 @@ describe("game.makeMove", () => {
     });
   });
 });
+
+describe("game.fromHash/game.toHash", () => {
+  it("should decode the initial game properly", () => {
+    expect(game.fromHash(1111)).toEqual(game.initial);
+    expect(game.toHash(game.initial)).toEqual(1111);
+  });
+});
