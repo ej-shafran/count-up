@@ -26,6 +26,8 @@ jobs:
 
       - name: Install and Build 🔧
         if: github.event.action != 'closed'
+        env:
+          BUILD_BASE: /count-up/pr-preview/pr-${{ github.event.number }}
         run: |
           pnpm install
           pnpm build
