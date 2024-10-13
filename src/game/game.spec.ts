@@ -1,5 +1,7 @@
+import { gameProperty } from "@/__test__/properties/game.property";
 import * as game from ".";
 import { describe, expect, it } from "vitest";
+import { produce } from "immer";
 
 // TODO: use property-based testing
 
@@ -12,9 +14,18 @@ describe("game.makeMove", () => {
   });
 });
 
-describe("game.fromHash/game.toHash", () => {
-  it("should decode the initial game properly", () => {
-    expect(game.fromHash(1111)).toEqual(game.initial);
-    expect(game.toHash(game.initial)).toEqual(1111);
+const sorted = produce<game.Game>((draft) => {
+  draft.players.forEach((player) => {
+    player.hands.sort((a, b) => b - a);
+  });
+});
+
+describe("game.{to,from}Hash", () => {
+  gameProperty("produce the same hash as a sorted game", (g) => {
+    expect(game.toHash(g)).toBe(game.toHash(sorted(g)));
+  });
+
+  gameProperty("always decode to sorted value", (g) => {
+    expect(game.fromHash(game.toHash(g))).toEqual(sorted(g));
   });
 });
