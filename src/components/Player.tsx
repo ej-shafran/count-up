@@ -4,6 +4,7 @@ import { Hand } from "./Hand";
 import {
   useCanSplit,
   useCurrentPlayer,
+  useGameStore,
   useIsClickable,
   useLoser,
 } from "@/game/store";
@@ -13,6 +14,7 @@ export interface PlayerProps {
 }
 
 export function Player({ player }: PlayerProps) {
+  const aiPlayer = useGameStore((store) => store.aiPlayer);
   const currentPlayer = useCurrentPlayer();
   const canSplit = useCanSplit(player);
   const isClickable = useIsClickable(player);
@@ -27,8 +29,13 @@ export function Player({ player }: PlayerProps) {
       )}
     >
       <h2 className="arvo-regular text-xl">
-        {(loser !== null || currentPlayer !== player) && (
-          <>Player {player === 1 ? "Two" : "One"}</>
+        {(loser !== null ||
+          currentPlayer !== player ||
+          aiPlayer === player) && (
+          <>
+            Player {player === 1 ? "Two" : "One"}
+            {player === aiPlayer ? " (Computer)" : ""}
+          </>
         )}
 
         {loser === null && currentPlayer === player && (

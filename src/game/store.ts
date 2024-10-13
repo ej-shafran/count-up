@@ -1,3 +1,4 @@
+import { assert } from "@/lib/assert";
 import * as game from ".";
 
 import { create } from "zustand";
@@ -5,13 +6,14 @@ import { create } from "zustand";
 interface GameStore {
   game: game.Game;
   originHand: game.Hand | null;
+  aiPlayer: game.Player | null | undefined;
 }
 
 export function splitHand() {
   const store = useGameStore.getState();
 
   const newGame = game.split(store.game);
-  if (!newGame) return;
+  assert(!!newGame);
 
   useGameStore.setState({
     game: newGame,
@@ -23,6 +25,14 @@ export function deselectHand() {
   useGameStore.setState({ originHand: null });
 }
 
+function makeAiMove(g: game.Game) {
+  setTimeout(() => {
+    const newGame = game.makeAiMove(g);
+    assert(!!newGame);
+    useGameStore.setState({ game: newGame });
+  }, 500);
+}
+
 export function selectHand(hand: game.Hand) {
   const store = useGameStore.getState();
   if (store.originHand === null) {
@@ -31,21 +41,43 @@ export function selectHand(hand: game.Hand) {
   }
 
   const newGame = game.makeMove(store.game, store.originHand, hand);
-  if (!newGame) return;
+  assert(!!newGame);
 
   useGameStore.setState({
     game: newGame,
     originHand: null,
   });
+
+  if (store.aiPlayer === newGame.currentPlayer) {
+    makeAiMove(newGame);
+  }
+}
+
+export function selectTwoPlayer() {
+  useGameStore.setState({ aiPlayer: null });
+}
+
+export function selectOnePlayer(player: game.Player) {
+  const aiPlayer = game.getOtherPlayer(player);
+  useGameStore.setState({ aiPlayer });
+
+  if (aiPlayer === 0) {
+    makeAiMove(game.initial);
+  }
 }
 
 export function restartGame() {
-  useGameStore.setState({ game: game.initial, originHand: null });
+  useGameStore.setState({
+    game: game.initial,
+    originHand: null,
+    aiPlayer: undefined,
+  });
 }
 
 export const useGameStore = create<GameStore>()(() => ({
   game: game.initial,
   originHand: null,
+  aiPlayer: undefined,
 }));
 
 export const useCurrentPlayer = () =>
@@ -64,10 +96,13 @@ export const useCanSplit = (player: game.Player) =>
   });
 
 export const useIsClickable = (player: game.Player) =>
-  useGameStore(
-    (store) =>
-      (store.game.currentPlayer === player) === (store.originHand === null),
-  );
+  useGameStore((store) => {
+    if (store.game.currentPlayer === store.aiPlayer) return false;
+
+    const isCurrentPlayer = store.game.currentPlayer === player;
+    const isSelectingOrigin = store.originHand === null;
+    return isCurrentPlayer === isSelectingOrigin;
+  });
 
 export const useLoser = () =>
   useGameStore((store) => {

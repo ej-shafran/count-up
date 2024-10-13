@@ -1,5 +1,6 @@
 import { Player } from "./Player";
 import { GameOverPopup } from "./GameOverPopup";
+import { AiPlayerPopup } from "./AiPlayerPopup";
 
 export function Game() {
   return (
@@ -10,6 +11,7 @@ export function Game() {
         <Player player={0} />
       </div>
 
+      <AiPlayerPopup />
       <GameOverPopup />
     </div>
   );
