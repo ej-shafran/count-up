@@ -38,8 +38,10 @@ export function getHandByFingers(
   game: Game,
   player: Player,
   fingers: Fingers,
-): Hand | -1 {
-  return game.players[player].hands.indexOf(fingers) as Hand | -1;
+): Hand | null {
+  const hand = game.players[player].hands.indexOf(fingers) as Hand | -1;
+  if (hand === -1) return null;
+  return hand;
 }
 
 export function getLoser(game: Game): Player | null {
@@ -58,12 +60,10 @@ export function split(game: Game): Game | null {
   if (isOver(game)) return null;
 
   const emptyHand = getHandByFingers(game, game.currentPlayer, 0);
-
-  if (emptyHand === -1) return null;
+  if (emptyHand === null) return null;
 
   const originFingers =
     game.players[game.currentPlayer].hands[getOtherHand(emptyHand)];
-
   if (originFingers === 0 || originFingers % 2 !== 0) return null;
 
   const newFingers = (originFingers / 2) as Fingers;
