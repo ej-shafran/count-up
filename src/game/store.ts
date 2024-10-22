@@ -66,19 +66,17 @@ export function selectOnePlayer(player: game.Player) {
   }
 }
 
-export function restartGame() {
-  useGameStore.setState({
-    game: game.initial,
-    originHand: null,
-    aiPlayer: undefined,
-  });
-}
-
-export const useGameStore = create<GameStore>()(() => ({
+const initialStore: GameStore = {
   game: game.initial,
   originHand: null,
   aiPlayer: undefined,
-}));
+};
+
+export function restartGame() {
+  useGameStore.setState(initialStore);
+}
+
+export const useGameStore = create<GameStore>()(() => initialStore);
 
 export const useCurrentPlayer = () =>
   useGameStore((store) => store.game.currentPlayer);
