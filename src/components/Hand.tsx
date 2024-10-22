@@ -7,18 +7,16 @@ import {
   useCurrentPlayer,
   useCanSplit,
   useIsClickable,
+  triggerHandAnimation,
 } from "@/game/store";
 import * as game from "@/game";
 import { Finger } from "./Finger";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 
 export interface HandProps {
   player: game.Player;
   hand: game.Hand;
 }
-
-const ANIMATION_TIMEOUT = 500;
 
 export function Hand({ hand, player }: HandProps) {
   const fingers = useGameStore(
@@ -28,8 +26,7 @@ export function Hand({ hand, player }: HandProps) {
     (store) => store.game.currentPlayer === player && store.originHand === hand,
   );
 
-  // TODO: add animations when AI player makes move to remove hand
-  const [isAnimating, setIsAnimating] = useState(false);
+  const isAnimating = useGameStore((store) => store.animations[player][hand]);
   const currentPlayer = useCurrentPlayer();
   const loser = useLoser();
 
@@ -102,11 +99,8 @@ export function Hand({ hand, player }: HandProps) {
 
         if (!isClickable) return;
 
-        setIsAnimating(true);
+        triggerHandAnimation(player, hand);
         selectHand(hand);
-        setTimeout(() => {
-          setIsAnimating(false);
-        }, ANIMATION_TIMEOUT);
       }}
     >
       {Array.from({ length: game.MAX_FINGERS }, (_, i) => (
