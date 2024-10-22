@@ -2,12 +2,18 @@ import { assert } from "@/lib/assert";
 import * as game from ".";
 
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import {
+  persist,
+  createJSONStorage,
+  subscribeWithSelector,
+} from "zustand/middleware";
+import { produce } from "immer";
 
 interface GameStore {
   game: game.Game;
   originHand: game.Hand | null;
   aiPlayer: game.Player | null | undefined;
+  animations: [[boolean, boolean], [boolean, boolean]];
 }
 
 export function splitHand() {
@@ -34,9 +40,16 @@ function makeAiMove(store: GameStore | undefined) {
   )
     return;
 
+  const otherPlayer = game.getOtherPlayer(store.aiPlayer);
   setTimeout(() => {
     const newGame = game.makeAiMove(store.game);
     assert(!!newGame);
+
+    const changedHand = newGame.players[otherPlayer].hands.findIndex(
+      (fingers, i) => store.game.players[otherPlayer].hands[i] !== fingers,
+    ) as game.Hand | -1;
+    if (changedHand !== -1) triggerHandAnimation(otherPlayer, changedHand);
+
     useGameStore.setState({ game: newGame });
   }, 500);
 }
@@ -66,10 +79,32 @@ export function selectOnePlayer(player: game.Player) {
   useGameStore.setState({ aiPlayer });
 }
 
+const ANIMATION_TIMEOUT = 500;
+
+const toggleAnimation = (
+  isAnimated: boolean,
+  player: game.Player,
+  hand: game.Hand,
+) =>
+  produce<GameStore>((draft) => {
+    draft.animations[player][hand] = isAnimated;
+  });
+
+export function triggerHandAnimation(player: game.Player, hand: game.Hand) {
+  useGameStore.setState(toggleAnimation(true, player, hand));
+  setTimeout(() => {
+    useGameStore.setState(toggleAnimation(false, player, hand));
+  }, ANIMATION_TIMEOUT);
+}
+
 const initialStore: GameStore = {
   game: game.initial,
   originHand: null,
   aiPlayer: undefined,
+  animations: [
+    [false, false],
+    [false, false],
+  ],
 };
 
 export function restartGame() {
@@ -77,13 +112,20 @@ export function restartGame() {
 }
 
 export const useGameStore = create<GameStore>()(
-  persist(() => initialStore, {
-    name: "game",
-    storage: createJSONStorage(() => sessionStorage),
-    onRehydrateStorage: () => makeAiMove,
-  }),
+  subscribeWithSelector(
+    persist(() => initialStore, {
+      name: "game",
+      storage: createJSONStorage(() => sessionStorage),
+      // Make an AI move (if applicable) whenever the state is rehydrated
+      onRehydrateStorage: () => makeAiMove,
+    }),
+  ),
 );
-useGameStore.subscribe(makeAiMove);
+// Make an AI move (if applicable) whenever the current player (or the selected AI player) are changed
+useGameStore.subscribe((store) => store, makeAiMove, {
+  equalityFn: (a, b) =>
+    a.game.currentPlayer === b.game.currentPlayer && a.aiPlayer === b.aiPlayer,
+});
 
 export const useCurrentPlayer = () =>
   useGameStore((store) => store.game.currentPlayer);
