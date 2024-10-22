@@ -24,27 +24,27 @@ const summed = (g: game.Game) => {
 };
 
 describe("game.{to,from}Hash", () => {
-  gameProperty("produce the same hash as a sorted game", (g) => {
+  gameProperty("produce the same hash as sorted value", (g) => {
     expect(game.toHash(g)).toBe(game.toHash(sorted(g)));
   });
 
-  gameProperty("always decode to sorted value", (g) => {
+  gameProperty("decode to sorted value", (g) => {
     expect(game.fromHash(game.toHash(g))).toEqual(sorted(g));
   });
 });
 
 describe("game.possibleMoves", () => {
-  overGameProperty("always return no valid moves", (g) => {
+  overGameProperty("return no valid moves", (g) => {
     const moves = game.possibleMoves(g);
     expect(moves.length).toBe(0);
   });
 
-  notOverGameProperty("always return at least one valid move", (g) => {
+  notOverGameProperty("return at least one valid move", (g) => {
     const moves = game.possibleMoves(g);
     expect(moves.length).toBeGreaterThan(0);
   });
 
-  notOverGameProperty("always have some change to the players' hands", (g) => {
+  notOverGameProperty("have some change to the players' hands", (g) => {
     const moves = game.possibleMoves(g);
     expect(moves.map((g) => g.players)).not.toContainEqual(g.players);
   });
