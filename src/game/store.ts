@@ -82,16 +82,9 @@ export const useCurrentPlayer = () =>
   useGameStore((store) => store.game.currentPlayer);
 
 export const useCanSplit = (player: game.Player) =>
-  useGameStore((store) => {
-    if (store.game.currentPlayer !== player) return false;
-
-    const emptyHand = game.getHandByFingers(store.game, player, 0);
-    if (emptyHand === -1) return false;
-
-    const otherHandFingers =
-      store.game.players[player].hands[game.getOtherHand(emptyHand)];
-    return otherHandFingers !== 0 && otherHandFingers % 2 === 0;
-  });
+  useGameStore(
+    (store) => store.game.currentPlayer === player && game.canSplit(store.game),
+  );
 
 export const useIsClickable = (player: game.Player) =>
   useGameStore((store) => {
