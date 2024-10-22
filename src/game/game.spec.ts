@@ -19,8 +19,7 @@ const summed = (g: game.Game) => {
     g.players.reduce(
       (acc, cur) => acc + cur.hands.reduce((acc: number, cur) => acc + cur, 0),
       0,
-    ) %
-    (game.MAX_FINGERS + 1)
+    ) % game.BASE
   );
 };
 
@@ -54,7 +53,7 @@ describe("game.possibleMoves", () => {
     const gameSum = summed(g);
     const currentPlayerData = g.players[g.currentPlayer];
     const possibleSums = currentPlayerData.hands.map(
-      (fingers) => (gameSum + fingers) % (game.MAX_FINGERS + 1),
+      (fingers) => (gameSum + fingers) % game.BASE,
     );
 
     const moves = game.possibleMoves(g);

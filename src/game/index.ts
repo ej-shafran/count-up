@@ -6,6 +6,7 @@ import { CustomSet } from "@/lib/custom-set";
 export const HANDS = 2;
 export const PLAYERS = 2;
 export const MAX_FINGERS = 4;
+export const BASE = MAX_FINGERS + 1;
 
 export type Fingers = NumberRange<{
   max: typeof MAX_FINGERS;
@@ -103,46 +104,33 @@ export function makeMove(
   });
 }
 
-function nthDigit(num: number, n: number, base: number) {
-  return Math.floor(num / Math.pow(base, n - 1)) % base;
+function nthDigit(num: number, n: number) {
+  return Math.floor(num / Math.pow(BASE, n - 1)) % BASE;
 }
 
-function toDigitHash(arr: number[], base: number) {
+function toDigitHash(arr: number[]) {
   return arr.reduce(
-    (acc, cur, i, arr) => acc + cur * Math.pow(base, arr.length - i - 1),
+    (acc, cur, i, arr) => acc + cur * Math.pow(BASE, arr.length - i - 1),
     0,
   );
 }
 
 export function toHash(game: Game): number {
-  return toDigitHash(
-    [
-      game.currentPlayer,
-      Math.max(...game.players[0].hands),
-      Math.min(...game.players[0].hands),
-      Math.max(...game.players[1].hands),
-      Math.min(...game.players[1].hands),
-    ],
-    MAX_FINGERS + 1,
-  );
+  return toDigitHash([
+    game.currentPlayer,
+    Math.max(...game.players[0].hands),
+    Math.min(...game.players[0].hands),
+    Math.max(...game.players[1].hands),
+    Math.min(...game.players[1].hands),
+  ]);
 }
 
 export function fromHash(hash: number): Game {
   return {
-    currentPlayer: nthDigit(hash, 5, MAX_FINGERS + 1) as Player,
+    currentPlayer: nthDigit(hash, 5) as Player,
     players: [
-      {
-        hands: [
-          nthDigit(hash, 4, MAX_FINGERS + 1) as Fingers,
-          nthDigit(hash, 3, MAX_FINGERS + 1) as Fingers,
-        ],
-      },
-      {
-        hands: [
-          nthDigit(hash, 2, MAX_FINGERS + 1) as Fingers,
-          nthDigit(hash, 1, MAX_FINGERS + 1) as Fingers,
-        ],
-      },
+      { hands: [nthDigit(hash, 4) as Fingers, nthDigit(hash, 3) as Fingers] },
+      { hands: [nthDigit(hash, 2) as Fingers, nthDigit(hash, 1) as Fingers] },
     ],
   };
 }
