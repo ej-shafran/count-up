@@ -5,22 +5,15 @@ import {
   DialogContent,
   DialogTitle,
   DialogFooter,
-  DialogClose,
   DialogDescription,
 } from "./ui/dialog";
-import { Button } from "./ui/button";
+import { RestartGameButton } from "./RestartGameButton";
 
 export function GameOverPopup() {
   const loser = useLoser();
 
   return (
-    <Dialog
-      open={loser !== null}
-      modal
-      onOpenChange={() => {
-        restartGame();
-      }}
-    >
+    <Dialog open={loser !== null} modal onOpenChange={restartGame}>
       <DialogContent className="h-1/3">
         <DialogHeader>
           <DialogTitle className="arvo-bold text-3xl">GAME OVER</DialogTitle>
@@ -31,9 +24,7 @@ export function GameOverPopup() {
         </DialogHeader>
 
         <DialogFooter>
-          <Button asChild>
-            <DialogClose className="arvo-regular">Restart Game</DialogClose>
-          </Button>
+          <RestartGameButton variant="default" />
         </DialogFooter>
       </DialogContent>
     </Dialog>
