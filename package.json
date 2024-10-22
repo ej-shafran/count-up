@@ -10,7 +10,6 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky",
-    "commitlint": "commitlint --edit",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest dev"
