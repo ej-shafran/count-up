@@ -2,6 +2,7 @@ import { assert } from "@/lib/assert";
 import * as game from ".";
 
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface GameStore {
   game: game.Game;
@@ -76,7 +77,12 @@ export function restartGame() {
   useGameStore.setState(initialStore);
 }
 
-export const useGameStore = create<GameStore>()(() => initialStore);
+export const useGameStore = create<GameStore>()(
+  persist(() => initialStore, {
+    name: "game",
+    storage: createJSONStorage(() => sessionStorage),
+  }),
+);
 
 export const useCurrentPlayer = () =>
   useGameStore((store) => store.game.currentPlayer);
