@@ -41,7 +41,21 @@ export function getHandByFingers(
   return game.players[player].hands.indexOf(fingers) as Hand | -1;
 }
 
+export function getLoser(game: Game): Player | null {
+  const index = game.players.findIndex((player) =>
+    player.hands.every((hand) => hand === 0),
+  ) as Player | -1;
+  if (index === -1) return null;
+  return index;
+}
+
+export function isOver(game: Game): boolean {
+  return getLoser(game) !== null;
+}
+
 export function split(game: Game): Game | null {
+  if (isOver(game)) return null;
+
   const emptyHand = getHandByFingers(game, game.currentPlayer, 0);
 
   if (emptyHand === -1) return null;
@@ -56,6 +70,10 @@ export function split(game: Game): Game | null {
     draft.players[draft.currentPlayer].hands = [newFingers, newFingers];
     draft.currentPlayer = getOtherPlayer(draft.currentPlayer);
   });
+}
+
+export function canSplit(game: Game): boolean {
+  return split(game) !== null;
 }
 
 export function getOtherPlayer(player: Player): Player {
@@ -129,7 +147,7 @@ export function fromHash(hash: number): Game {
   };
 }
 
-function possibleMoves(game: Game): Game[] {
+export function possibleMoves(game: Game): Game[] {
   return Array.from(
     new CustomSet(
       toHash,

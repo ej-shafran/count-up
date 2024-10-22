@@ -1,24 +1,28 @@
-import { gameProperty } from "@/__test__/properties/game.property";
+import {
+  canSplitGameProperty,
+  gameProperty,
+  notOverGameProperty,
+  overGameProperty,
+} from "@/__test__/properties/game.property";
 import * as game from ".";
-import { describe, expect, it } from "vitest";
+import { describe, expect } from "vitest";
 import { produce } from "immer";
-
-// TODO: use property-based testing
-
-describe("game.makeMove", () => {
-  it("should make a move", () => {
-    expect(game.makeMove(game.initial, 0, 0)).toEqual({
-      players: [{ hands: [1, 1] }, { hands: [2, 1] }],
-      currentPlayer: 1,
-    });
-  });
-});
 
 const sorted = produce<game.Game>((draft) => {
   draft.players.forEach((player) => {
     player.hands.sort((a, b) => b - a);
   });
 });
+
+const summed = (g: game.Game) => {
+  return (
+    g.players.reduce(
+      (acc, cur) => acc + cur.hands.reduce((acc: number, cur) => acc + cur, 0),
+      0,
+    ) %
+    (game.MAX_FINGERS + 1)
+  );
+};
 
 describe("game.{to,from}Hash", () => {
   gameProperty("produce the same hash as a sorted game", (g) => {
@@ -27,5 +31,41 @@ describe("game.{to,from}Hash", () => {
 
   gameProperty("always decode to sorted value", (g) => {
     expect(game.fromHash(game.toHash(g))).toEqual(sorted(g));
+  });
+});
+
+describe("game.possibleMoves", () => {
+  overGameProperty("always return no valid moves", (g) => {
+    const moves = game.possibleMoves(g);
+    expect(moves.length).toBe(0);
+  });
+
+  notOverGameProperty("always return at least one valid move", (g) => {
+    const moves = game.possibleMoves(g);
+    expect(moves.length).toBeGreaterThan(0);
+  });
+
+  notOverGameProperty("always have some change to the players' hands", (g) => {
+    const moves = game.possibleMoves(g);
+    expect(moves.map((g) => g.players)).not.toContainEqual(g.players);
+  });
+
+  notOverGameProperty("only create valid changes to the game", (g) => {
+    const gameSum = summed(g);
+    const currentPlayerData = g.players[g.currentPlayer];
+    const possibleSums = currentPlayerData.hands.map(
+      (fingers) => (gameSum + fingers) % (game.MAX_FINGERS + 1),
+    );
+
+    const moves = game.possibleMoves(g);
+    for (const move of moves) {
+      const moveSum = summed(move);
+      expect(possibleSums).toContain(moveSum);
+    }
+  });
+
+  canSplitGameProperty("include splitting the current player's hand", (g) => {
+    const moves = game.possibleMoves(g);
+    expect(moves).toContainEqual(game.split(g));
   });
 });

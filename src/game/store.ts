@@ -105,11 +105,4 @@ export const useIsClickable = (player: game.Player) =>
   });
 
 export const useLoser = () =>
-  useGameStore((store) => {
-    const losingPlayerIndex = store.game.players.findIndex((player) =>
-      player.hands.every((fingers) => fingers === 0),
-    );
-
-    if (losingPlayerIndex === -1) return null;
-    return losingPlayerIndex as game.Player;
-  });
+  useGameStore((store) => game.getLoser(store.game));

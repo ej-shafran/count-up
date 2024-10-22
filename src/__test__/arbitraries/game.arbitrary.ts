@@ -15,9 +15,21 @@ export function playerDataArb(): fc.Arbitrary<game.PlayerData> {
   });
 }
 
-export function gameArb(): fc.Arbitrary<game.Game> {
-  return fc.record({
+export function gameArb(
+  options: { isOver?: boolean; canSplit?: boolean } = {},
+): fc.Arbitrary<game.Game> {
+  let baseArb = fc.record({
     currentPlayer: playerArb(),
     players: fc.tuple(playerDataArb(), playerDataArb()),
   });
+
+  if (options.isOver !== undefined) {
+    baseArb = baseArb.filter((g) => game.isOver(g) === options.isOver);
+  }
+
+  if (options.canSplit !== undefined) {
+    baseArb = baseArb.filter((g) => game.canSplit(g) === options.canSplit);
+  }
+
+  return baseArb;
 }
