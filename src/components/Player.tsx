@@ -4,6 +4,7 @@ import { Hand } from "./Hand";
 import {
   useCanSplit,
   useCurrentPlayer,
+  useGameStore,
   useIsClickable,
   useLoser,
 } from "@/game/store";
@@ -13,22 +14,28 @@ export interface PlayerProps {
 }
 
 export function Player({ player }: PlayerProps) {
+  const aiPlayer = useGameStore((store) => store.aiPlayer);
   const currentPlayer = useCurrentPlayer();
   const canSplit = useCanSplit(player);
   const isClickable = useIsClickable(player);
-  const otherIsClickable = useIsClickable(player === 0 ? 1 : 0);
+  const otherIsClickable = useIsClickable(game.getOtherPlayer(player));
   const loser = useLoser();
 
   return (
     <div
       className={cn(
         "flex h-1/2 grow gap-3",
-        player === 0 ? "flex-col-reverse" : "flex-col",
+        player === 1 ? "flex-col" : "flex-col-reverse",
       )}
     >
       <h2 className="arvo-regular text-xl">
-        {(loser !== null || currentPlayer !== player) && (
-          <>Player {player === 1 ? "Two" : "One"}</>
+        {(loser !== null ||
+          currentPlayer !== player ||
+          aiPlayer === player) && (
+          <>
+            Player {player === 1 ? "Two" : "One"}
+            {player === aiPlayer ? " (Computer)" : ""}
+          </>
         )}
 
         {loser === null && currentPlayer === player && (

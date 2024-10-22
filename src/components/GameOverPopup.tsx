@@ -8,6 +8,7 @@ import {
   DialogClose,
   DialogDescription,
 } from "./ui/dialog";
+import { Button } from "./ui/button";
 
 export function GameOverPopup() {
   const loser = useLoser();
@@ -30,7 +31,9 @@ export function GameOverPopup() {
         </DialogHeader>
 
         <DialogFooter>
-          <DialogClose className="arvo-regular">Restart Game</DialogClose>
+          <Button asChild>
+            <DialogClose className="arvo-regular">Restart Game</DialogClose>
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

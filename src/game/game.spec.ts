@@ -1,13 +1,70 @@
+import {
+  canSplitGameProperty,
+  gameProperty,
+  notOverGameProperty,
+  overGameProperty,
+} from "@/__test__/properties/game.property";
 import * as game from ".";
-import { describe, expect, it } from "vitest";
+import { describe, expect } from "vitest";
+import { produce } from "immer";
 
-// TODO: use property-based testing
+const sorted = produce<game.Game>((draft) => {
+  draft.players.forEach((player) => {
+    player.hands.sort((a, b) => b - a);
+  });
+});
 
-describe("game.makeMove", () => {
-  it("should make a move", () => {
-    expect(game.makeMove(game.initial, 0, 0)).toEqual({
-      players: [{ hands: [1, 1] }, { hands: [2, 1] }],
-      currentPlayer: 1,
-    });
+const summed = (g: game.Game) => {
+  return (
+    g.players.reduce(
+      (acc, cur) => acc + cur.hands.reduce((acc: number, cur) => acc + cur, 0),
+      0,
+    ) % game.BASE
+  );
+};
+
+describe("game.{to,from}Hash", () => {
+  gameProperty("produce the same hash as sorted value", (g) => {
+    expect(game.toHash(g)).toBe(game.toHash(sorted(g)));
+  });
+
+  gameProperty("decode to sorted value", (g) => {
+    expect(game.fromHash(game.toHash(g))).toEqual(sorted(g));
+  });
+});
+
+describe("game.possibleMoves", () => {
+  overGameProperty("return no valid moves", (g) => {
+    const moves = game.possibleMoves(g);
+    expect(moves.length).toBe(0);
+  });
+
+  notOverGameProperty("return at least one valid move", (g) => {
+    const moves = game.possibleMoves(g);
+    expect(moves.length).toBeGreaterThan(0);
+  });
+
+  notOverGameProperty("have some change to the players' hands", (g) => {
+    const moves = game.possibleMoves(g);
+    expect(moves.map((g) => g.players)).not.toContainEqual(g.players);
+  });
+
+  notOverGameProperty("only create valid changes to the game", (g) => {
+    const gameSum = summed(g);
+    const currentPlayerData = g.players[g.currentPlayer];
+    const possibleSums = currentPlayerData.hands.map(
+      (fingers) => (gameSum + fingers) % game.BASE,
+    );
+
+    const moves = game.possibleMoves(g);
+    for (const move of moves) {
+      const moveSum = summed(move);
+      expect(possibleSums).toContain(moveSum);
+    }
+  });
+
+  canSplitGameProperty("include splitting the current player's hand", (g) => {
+    const moves = game.possibleMoves(g);
+    expect(moves).toContainEqual(game.split(g));
   });
 });
