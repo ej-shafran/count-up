@@ -2,6 +2,7 @@ import { assert } from "@/lib/assert";
 import * as game from ".";
 
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface GameStore {
   game: game.Game;
@@ -25,9 +26,16 @@ export function deselectHand() {
   useGameStore.setState({ originHand: null });
 }
 
-function makeAiMove(g: game.Game) {
+function makeAiMove(store: GameStore | undefined) {
+  if (
+    !store ||
+    store.aiPlayer !== store.game.currentPlayer ||
+    game.isOver(store.game)
+  )
+    return;
+
   setTimeout(() => {
-    const newGame = game.makeAiMove(g);
+    const newGame = game.makeAiMove(store.game);
     assert(!!newGame);
     useGameStore.setState({ game: newGame });
   }, 500);
@@ -47,10 +55,6 @@ export function selectHand(hand: game.Hand) {
     game: newGame,
     originHand: null,
   });
-
-  if (store.aiPlayer === newGame.currentPlayer) {
-    makeAiMove(newGame);
-  }
 }
 
 export function selectTwoPlayer() {
@@ -60,10 +64,6 @@ export function selectTwoPlayer() {
 export function selectOnePlayer(player: game.Player) {
   const aiPlayer = game.getOtherPlayer(player);
   useGameStore.setState({ aiPlayer });
-
-  if (aiPlayer === 0) {
-    makeAiMove(game.initial);
-  }
 }
 
 const initialStore: GameStore = {
@@ -76,7 +76,14 @@ export function restartGame() {
   useGameStore.setState(initialStore);
 }
 
-export const useGameStore = create<GameStore>()(() => initialStore);
+export const useGameStore = create<GameStore>()(
+  persist(() => initialStore, {
+    name: "game",
+    storage: createJSONStorage(() => sessionStorage),
+    onRehydrateStorage: () => makeAiMove,
+  }),
+);
+useGameStore.subscribe(makeAiMove);
 
 export const useCurrentPlayer = () =>
   useGameStore((store) => store.game.currentPlayer);
