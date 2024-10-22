@@ -28,6 +28,7 @@ export function Hand({ hand, player }: HandProps) {
     (store) => store.game.currentPlayer === player && store.originHand === hand,
   );
 
+  // TODO: add animations when AI player makes move to remove hand
   const [isAnimating, setIsAnimating] = useState(false);
   const currentPlayer = useCurrentPlayer();
   const loser = useLoser();
