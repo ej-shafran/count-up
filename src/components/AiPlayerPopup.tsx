@@ -34,7 +34,7 @@ export function AiPlayerPopup() {
 
   return (
     <Dialog open={aiPlayer === undefined} modal>
-      <DialogContent className="h-1/3">
+      <DialogContent className="h-1/3" noClose>
         <DialogHeader>
           <DialogTitle className="arvo-bold text-3xl">
             {isOnePlayer ? "SELECT PLAYER" : "SELECT GAME MODE"}
