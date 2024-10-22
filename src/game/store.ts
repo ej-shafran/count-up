@@ -20,6 +20,10 @@ export function splitHand() {
     game: newGame,
     originHand: null,
   });
+
+  if (store.aiPlayer === newGame.currentPlayer) {
+    makeAiMove(newGame);
+  }
 }
 
 export function deselectHand() {
