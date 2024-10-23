@@ -2,6 +2,7 @@ import { produce } from "immer";
 import type { NumberRange } from "@/types/number-range";
 import type { Tuple } from "@/types/tuple";
 import { CustomSet } from "@/lib/custom-set";
+import { assert } from "@/lib/assert";
 
 export const HANDS = 2;
 export const PLAYERS = 2;
@@ -155,8 +156,71 @@ export function possibleMoves(game: Game): Game[] {
   );
 }
 
-export function makeAiMove(game: Game): Game | null {
+const winners = new Map<number, Player | null>();
+
+function getWinnerForGame(game: Game): Player | null {
+  const hash = toHash(game);
+
+  // If a result is already cached for this move, return it
+  const cachedWinner = winners.get(hash);
+  if (cachedWinner !== undefined) return cachedWinner;
+
+  // If the game is over, return the winner
+  const loser = getLoser(game);
+  if (loser !== null) {
+    const winner = getOtherPlayer(loser);
+    winners.set(hash, winner);
+    return winner;
+  }
+
+  // Mark this move as tied for now, so if we encounter it again while recursing we now that we're in an infinite loop
+  winners.set(hash, null);
+
+  const otherPlayer = getOtherPlayer(game.currentPlayer);
+
   const moves = possibleMoves(game);
+  // If any of the possible moves cause the current player to win immediately, this move is winning
+  if (moves.some((move) => getLoser(move) === otherPlayer)) {
+    winners.set(hash, game.currentPlayer);
+    return game.currentPlayer;
+  }
+
+  // Recursively check every move
+  const winnersForMoves = moves.map(getWinnerForGame);
+  // If any of the possible moves cause the current player to win down the line, this move is winning
+  if (winnersForMoves.some((winner) => winner === game.currentPlayer)) {
+    winners.set(hash, game.currentPlayer);
+    return game.currentPlayer;
+  }
+
+  // If every move will lead to a loss down the line, this move is losing
+  if (winnersForMoves.every((winner) => winner === otherPlayer)) {
+    winners.set(hash, otherPlayer);
+    return otherPlayer;
+  }
+
+  // If this move isn't winning OR losing, it's a tie
+  return null;
+}
+
+function movesWithWinners(game: Game): { move: Game; winner: Player | null }[] {
+  return possibleMoves(game).map((move) => ({
+    move,
+    winner: getWinnerForGame(move),
+  }));
+}
+
+export function makeAiMove(game: Game): Game | null {
+  const moves = movesWithWinners(game);
   if (!moves.length) return null;
-  return moves[Math.floor(Math.random() * moves.length)] ?? null;
+
+  const winningMove = moves.find(({ winner }) => winner === game.currentPlayer);
+  if (winningMove) return winningMove.move;
+
+  const tiedMove = moves.find(({ winner }) => winner === null);
+  if (tiedMove) return tiedMove.move;
+
+  const result = moves[Math.floor(Math.random() * moves.length)];
+  assert(!!result);
+  return result.move;
 }
