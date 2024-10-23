@@ -37,10 +37,14 @@ export function AiPlayerPopup() {
       <DialogContent className="h-1/3" noClose>
         <DialogHeader>
           <DialogTitle className="arvo-bold text-3xl">
-            {isOnePlayer ? "SELECT PLAYER" : "SELECT GAME MODE"}
+            {isOnePlayer ? "Select Player" : "Select Game Mode"}
           </DialogTitle>
 
-          <DialogDescription className="arvo-regular text-lg"></DialogDescription>
+          <DialogDescription className="arvo-regular text-lg">
+            {isOnePlayer
+              ? "Choose which player to play as."
+              : "Choose whether to play the computer or another player."}
+          </DialogDescription>
         </DialogHeader>
 
         <DialogFooter className="arvo-regular">

@@ -16,7 +16,7 @@ export function GameOverPopup() {
     <Dialog open={loser !== null} modal onOpenChange={restartGame}>
       <DialogContent className="h-1/3">
         <DialogHeader>
-          <DialogTitle className="arvo-bold text-3xl">GAME OVER</DialogTitle>
+          <DialogTitle className="arvo-bold text-3xl">Game Over</DialogTitle>
 
           <DialogDescription className="arvo-regular text-lg">
             Player {loser === 1 ? "One" : "Two"} Wins!
