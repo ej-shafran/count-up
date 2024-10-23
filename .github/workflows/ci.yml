@@ -19,6 +19,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup NodeJS 🪚
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/iron
+
       - name: Setup PNPM 🔨
         uses: pnpm/action-setup@v4
 
@@ -47,6 +52,10 @@ jobs:
       - name: Lint 🧹
         run: |
           pnpm lint
+
+      - name: Knip ✂️
+        run: |
+          pnpm knip
 
       - name: Test 🧪
         run: |

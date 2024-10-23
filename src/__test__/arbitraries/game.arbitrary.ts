@@ -1,15 +1,15 @@
 import * as game from "@/game";
 import fc from "fast-check";
 
-export function playerArb(): fc.Arbitrary<game.Player> {
+function playerArb(): fc.Arbitrary<game.Player> {
   return fc.constantFrom(0, 1);
 }
 
-export function fingersArb(): fc.Arbitrary<game.Fingers> {
+function fingersArb(): fc.Arbitrary<game.Fingers> {
   return fc.constantFrom(0, 1, 2, 3, 4);
 }
 
-export function playerDataArb(): fc.Arbitrary<game.PlayerData> {
+function playerDataArb(): fc.Arbitrary<game.PlayerData> {
   return fc.record({
     hands: fc.tuple(fingersArb(), fingersArb()),
   });
