@@ -1,6 +1,6 @@
 import cn from "clsx";
 import * as game from "@/game";
-import { Hand } from "./Hand";
+import { Hand } from "./hand";
 import {
   useCanSplit,
   useCurrentPlayer,
