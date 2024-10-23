@@ -1,0 +1,18 @@
+ls:
+  .dir: kebab-case | regex:__.+__
+  .ts: kebab-case
+  .d.ts: kebab-case
+  .spec.ts: kebab-case
+  .tsx: kebab-case
+
+  src/__test__/arbitraries:
+    .arbitrary.ts: lowercase
+
+  src/__test__/properties:
+    .property.ts: lowercase
+
+ignore:
+  - .git
+  - .github
+  - .husky
+  - node_modules
