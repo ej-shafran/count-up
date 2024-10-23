@@ -8,7 +8,7 @@ export function Game() {
   return (
     <div className="arvo-regular m-auto flex size-full flex-col p-3 text-center lg:w-1/2 lg:px-0">
       <div className="flex w-full flex-col justify-center gap-2 lg:flex-row lg:gap-3">
-        <h1 className="arvo-bold text-4xl">Counting Game</h1>
+        <h1 className="arvo-bold text-4xl">Count Up</h1>
 
         <div className="flex w-full justify-center gap-3 lg:w-0">
           <RulesButton />
