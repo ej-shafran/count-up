@@ -7,7 +7,7 @@ import {
   DialogFooter,
   DialogDescription,
 } from "./ui/dialog";
-import { RestartGameButton } from "./RestartGameButton";
+import { RestartGameButton } from "./restart-game-button";
 
 export function GameOverPopup() {
   const loser = useLoser();

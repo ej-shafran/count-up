@@ -10,7 +10,7 @@ import {
   triggerHandAnimation,
 } from "@/game/store";
 import * as game from "@/game";
-import { Finger } from "./Finger";
+import { Finger } from "./finger";
 import { cn } from "@/lib/utils";
 
 export interface HandProps {

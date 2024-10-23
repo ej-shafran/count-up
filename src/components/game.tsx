@@ -1,7 +1,7 @@
-import { Player } from "./Player";
-import { GameOverPopup } from "./GameOverPopup";
-import { AiPlayerPopup } from "./AiPlayerPopup";
-import { RestartGameButton } from "./RestartGameButton";
+import { Player } from "./player";
+import { GameOverPopup } from "./game-over-popup";
+import { AiPlayerPopup } from "./ai-player-popup";
+import { RestartGameButton } from "./restart-game-button";
 
 export function Game() {
   return (
