@@ -34,7 +34,7 @@ export const initial: Game = {
   currentPlayer: 0,
 };
 
-export function getHandByFingers(
+function getHandByFingers(
   game: Game,
   player: Player,
   fingers: Fingers,
@@ -81,7 +81,7 @@ export function getOtherPlayer(player: Player): Player {
   return player === 0 ? 1 : 0;
 }
 
-export function getOtherHand(hand: Hand): Hand {
+function getOtherHand(hand: Hand): Hand {
   return hand === 0 ? 1 : 0;
 }
 
