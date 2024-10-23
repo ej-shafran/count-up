@@ -28,7 +28,7 @@ export function Player({ player }: PlayerProps) {
         player === 1 ? "flex-col" : "flex-col-reverse",
       )}
     >
-      <h2 className="arvo-regular text-xl">
+      <h2 className="text-xl">
         {(loser !== null ||
           currentPlayer !== player ||
           aiPlayer === player) && (

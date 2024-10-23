@@ -23,8 +23,11 @@ export function GameOverPopup() {
           </DialogDescription>
         </DialogHeader>
 
-        <DialogFooter>
-          <RestartGameButton variant="default" />
+        <DialogFooter className="arvo-regular">
+          <RestartGameButton
+            variant="default"
+            className="w-1/2 self-center rounded"
+          />
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -1,16 +1,29 @@
-import { cn } from "@/lib/utils";
 import { Button, ButtonProps } from "./ui/button";
 import { restartGame } from "@/game/store";
+import { IconButton } from "./ui/icon-button";
+import { RotateCcw } from "lucide-react";
 
-export function RestartGameButton(props: Omit<ButtonProps, "onClick">) {
+export interface RestartGameButtonProps extends Omit<ButtonProps, "onClick"> {
+  asIcon?: boolean;
+}
+
+export function RestartGameButton({
+  asIcon,
+  ...props
+}: RestartGameButtonProps) {
+  const text = "Restart Game";
+
+  if (asIcon) {
+    return (
+      <IconButton tooltipText={text} {...props} onClick={restartGame}>
+        <RotateCcw />
+      </IconButton>
+    );
+  }
+
   return (
-    <Button
-      variant="ghost"
-      {...props}
-      className={cn("arvo-regular w-1/2 self-center rounded", props.className)}
-      onClick={restartGame}
-    >
-      Restart Game
+    <Button {...props} onClick={restartGame}>
+      {text}
     </Button>
   );
 }

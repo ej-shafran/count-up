@@ -43,7 +43,7 @@ export function AiPlayerPopup() {
           <DialogDescription className="arvo-regular text-lg"></DialogDescription>
         </DialogHeader>
 
-        <DialogFooter>
+        <DialogFooter className="arvo-regular">
           <Button onClick={handleClick(0)}>
             {isOnePlayer ? "Play as Player One" : "One Player"}
           </Button>
