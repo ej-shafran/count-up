@@ -119,10 +119,10 @@ function toDigitHash(arr: number[]) {
 export function toHash(game: Game): number {
   return toDigitHash([
     game.currentPlayer,
-    Math.max(...game.players[0].hands),
     Math.min(...game.players[0].hands),
-    Math.max(...game.players[1].hands),
+    Math.max(...game.players[0].hands),
     Math.min(...game.players[1].hands),
+    Math.max(...game.players[1].hands),
   ]);
 }
 
@@ -130,8 +130,8 @@ export function fromHash(hash: number): Game {
   return {
     currentPlayer: nthDigit(hash, 5) as Player,
     players: [
-      { hands: [nthDigit(hash, 4) as Fingers, nthDigit(hash, 3) as Fingers] },
-      { hands: [nthDigit(hash, 2) as Fingers, nthDigit(hash, 1) as Fingers] },
+      { hands: [nthDigit(hash, 3) as Fingers, nthDigit(hash, 4) as Fingers] },
+      { hands: [nthDigit(hash, 1) as Fingers, nthDigit(hash, 2) as Fingers] },
     ],
   };
 }
