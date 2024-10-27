@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "entry": ["src/main.tsx", "tailwind.config.js"],
+  "entry": ["src/main.tsx"],
   "project": ["**/*.{js,ts,tsx}"],
   "ignore": ["src/components/ui/*.tsx"]
 }
